@@ -342,6 +342,9 @@ namespace beta {
       to a routine that takes just a <code>const charT*</code> and expects a
       null-terminated string.</p>
 
+      <p>The complexity of member functions is <i>O(1)</i> unless otherwise
+      specified.</p>
+
       <pre><code>namespace std {
 namespace beta {
   template&lt;typename charT, typename traits&gt;
@@ -436,7 +439,7 @@ namespace beta {
   bool <a href="#strings.string_ref.operator>=">operator&gt;=</a>(basic_string_ref&lt;charT, traits&gt; x, basic_string_ref&lt;charT, traits&gt; y);
 
   // Inserter
-  template&lt;class charT, class traits>
+  template&lt;class charT, class traits=char_traits&lt;charT>>
   basic_ostream&lt;charT, traits>&amp;
   <a href="#strings.string_ref.operator&lt;&lt;">operator&lt;&lt;</a>(basic_ostream&lt;charT, traits>&amp; os,
              const basic_string_ref&lt;charT,traits>&amp; str);
@@ -489,10 +492,11 @@ namespace beta {
           </code></header>
 
           <dl class="attribute">
+            <dt>Complexity:</dt><dd>O(traits::length(str))</dd>
             <dt>Postconditions:</dt><dd><code><a
             href="#strings.string_ref.data">data()</a> == str</code>, and
             <code>size()</code> is <code>0</code> if <code>str == nullptr</code>
-            or <code>strlen(str)</code> otherwise.</dd>
+            or <code>traits::length(str)</code> otherwise.</dd>
           </dl>
         </section>
 
@@ -615,7 +619,6 @@ namespace beta {
           <dl class="attribute">
             <dt>Returns:</dt><dd><code>std::distance(begin(), end())</code>, a count
             of the number of char-like objects currently in the string.</dd>
-            <dt>Complexity:</dt><dd>constant time.</dd>
           </dl>
         </section>
 
@@ -623,7 +626,6 @@ namespace beta {
           <header><code id="strings.string_ref.max_size">constexpr size_type <a href="#strings.string_ref.max_size">max_size</a>() const;</code></header>
           <dl class="attribute">
             <dt>Returns:</dt><dd>The size of the largest possible string.</dd>
-            <dt>Complexity:</dt><dd>constant time.</dd>
           </dl>
         </section>
 
@@ -646,7 +648,6 @@ namespace beta {
             <dt>Requires:</dt><dd><code>pos &lt; size()</code></dd>
             <dt>Throws:</dt><dd>Nothing</dd>
             <dt>Returns:</dt><dd><code>*(begin() + pos)</code></dd>
-            <dt>Complexity:</dt><dd>constant time.</dd>
           </dl>
         </section>
 
@@ -656,7 +657,6 @@ namespace beta {
             <dt>Throws:</dt><dd><code>out_of_range</code> if <code>pos >=
             size()</code>.</dd>
             <dt>Returns:</dt><dd><code>operator[](pos)</code></dd>
-            <dt>Complexity:</dt><dd>constant time.</dd>
           </dl>
         </section>
     
@@ -689,7 +689,6 @@ namespace beta {
             href="#strings.string_ref.data">data()</a></code>,<code><a
             href="#strings.string_ref.data">data()</a> + size()</code>) must be
             valid even for empty <code>basic_string_ref</code>s..</dd>
-            <dt>Complexity:</dt><dd>constant time.</dd>
             <dt>Requires:</dt><dd>The program shall not alter any of the values
             stored in the character array.</dd>
           </dl>
@@ -771,6 +770,8 @@ namespace beta {
               <code>traits::compare(data(), other.data(),
               <var>rlen</var>)</code>.</dd>
 
+              <dt>Complexity:</dt><dd>O(<var>rlen</var>)</dd>
+
               <dt>Returns:</dt><dd>The nonzero result if the result of the
               comparison is nonzero. Otherwise, returns a value as indicated in the following table:
               <table>
@@ -788,6 +789,8 @@ namespace beta {
             </code></header>
 
             <dl class="attribute">
+              <dt>Complexity:</dt><dd>O(min(size(), x.size()))</dd>
+
               <dt>Returns:</dt><dd><code>true</code> if <code>x</code> is a prefix of <code>*this</code>.</dd>
             </dl>
           </section>
@@ -796,6 +799,8 @@ namespace beta {
             <header><code id="strings.string_ref.ends_with">bool <a href="#strings.string_ref.ends_with">ends_with</a>(basic_string_ref x) const;</code></header>
 
             <dl class="attribute">
+              <dt>Complexity:</dt><dd>O(min(size(), x.size()))</dd>
+
               <dt>Returns:</dt><dd><code>true</code> if <code>x</code> is a suffix of <code>*this</code>.</dd>
             </dl>
           </section>
@@ -810,6 +815,12 @@ namespace beta {
           argument <code><var>c</var></code> return the result of a call to the
           same-named member function with an argument of
           <code>basic_string_ref(&amp;c, 1)</code>.</p>
+
+          <p>Member functions in this section have complexity O(<code>size() *
+          <var>argument</var>.size()</code>) at worst (where
+          <code><var>argument</var>.size()</code> is <code>1</code> for
+          <code>charT</code> arguments), although implementations are encouraged
+          to do better.</p>
 
           <section class="function">
             <header><code id="strings.string_ref.find">size_type <a href="#strings.string_ref.find">find</a>(basic_string_ref str) const;<br/>
